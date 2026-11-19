@@ -1,0 +1,184 @@
+services:
+
+  # ---------------------------
+  # HADOOP - HDFS NAMENODE
+  # ---------------------------
+  namenode:
+    image: bde2020/hadoop-namenode:2.0.0-hadoop3.2.1-java8
+    container_name: retailx-namenode
+    restart: unless-stopped
+    ports:
+      - "9870:9870"
+    environment:
+      CLUSTER_NAME: retailx
+      CORE_CONF_fs_defaultFS: hdfs://namenode:8020
+      HDFS_CONF_dfs_replication: 2
+    volumes:
+      - namenode_data:/hadoop/dfs/name
+      - ./source-data:/retailx/source-data:ro
+    networks:
+      - retailx-net
+
+  # ---------------------------
+  # HADOOP - DATANODE 1
+  # ---------------------------
+  datanode1:
+    image: bde2020/hadoop-datanode:2.0.0-hadoop3.2.1-java8
+    container_name: retailx-datanode1
+    restart: unless-stopped
+    depends_on:
+      - namenode
+    environment:
+      SERVICE_PRECONDITION: "namenode:9870"
+      CORE_CONF_fs_defaultFS: hdfs://namenode:8020
+      HDFS_CONF_dfs_replication: 2
+    volumes:
+      - datanode1_data:/hadoop/dfs/data
+    networks:
+      - retailx-net
+
+  # ---------------------------
+  # HADOOP - DATANODE 2
+  # ---------------------------
+  datanode2:
+    image: bde2020/hadoop-datanode:2.0.0-hadoop3.2.1-java8
+    container_name: retailx-datanode2
+    restart: unless-stopped
+    depends_on:
+      - namenode
+    environment:
+      SERVICE_PRECONDITION: "namenode:9870"
+      CORE_CONF_fs_defaultFS: hdfs://namenode:8020
+      HDFS_CONF_dfs_replication: 2
+    volumes:
+      - datanode2_data:/hadoop/dfs/data
+    networks:
+      - retailx-net
+
+  # ---------------------------
+  # YARN RESOURCE MANAGER
+  # ---------------------------
+  resourcemanager:
+    image: bde2020/hadoop-resourcemanager:2.0.0-hadoop3.2.1-java8
+    container_name: retailx-resourcemanager
+    restart: unless-stopped
+    ports:
+      - "8088:8088"
+    environment:
+      CORE_CONF_fs_defaultFS: hdfs://namenode:8020
+    depends_on:
+      - namenode
+    networks:
+      - retailx-net
+
+  # ---------------------------
+  # YARN NODE MANAGER
+  # ---------------------------
+  nodemanager:
+    image: bde2020/hadoop-nodemanager:2.0.0-hadoop3.2.1-java8
+    container_name: retailx-nodemanager
+    restart: unless-stopped
+    environment:
+      CORE_CONF_fs_defaultFS: hdfs://namenode:8020
+      YARN_CONF_yarn_resourcemanager_hostname: resourcemanager
+    depends_on:
+      - resourcemanager
+    networks:
+      - retailx-net
+
+  # ---------------------------
+  # HIVE SQL SERVICE
+  # ---------------------------
+  hive-server:
+    image: apache/hive:4.0.0
+    container_name: retailx-hive
+    restart: unless-stopped
+    ports:
+      - "10000:10000"
+      - "10002:10002"
+    environment:
+      SERVICE_NAME: hiveserver2
+    volumes:
+      - hive_data:/opt/hive/data
+    networks:
+      - retailx-net
+
+  # ---------------------------
+  # SeaweedFS - OBJECT STORAGE
+  # ---------------------------
+  
+  seaweedfs:
+    image: chrislusf/seaweedfs:4.50
+    container_name: retailx-seaweedfs
+    restart: unless-stopped
+    command: mini -dir=/data -s3
+    ports:
+      - "8333:8333"
+      - "9333:9333"
+      - "8888:8888"
+    environment:
+      AWS_ACCESS_KEY_ID: admin
+      AWS_SECRET_ACCESS_KEY: retailx_password
+    volumes:
+      - seaweedfs_data:/data
+    networks:
+      - retailx-net
+
+
+  # ---------------------------
+  # ICEBERG REST CATALOG
+  # ---------------------------
+  iceberg-rest:
+    image: apache/iceberg-rest-fixture
+    container_name: retailx-iceberg-rest
+    restart: unless-stopped
+    ports:
+      - "8181:8181"
+    environment:
+      AWS_ACCESS_KEY_ID: admin
+      AWS_SECRET_ACCESS_KEY: retailx_password
+      AWS_REGION: us-east-1
+      CATALOG_WAREHOUSE: s3://warehouse/
+      CATALOG_IO__IMPL: org.apache.iceberg.aws.s3.S3FileIO
+      CATALOG_S3_ENDPOINT: http://seaweedfs:8080
+      CATALOG_S3_PATH__STYLE__ACCESS: "true"
+    depends_on:
+      - seaweedfs
+    networks:
+      - retailx-net
+
+  # ---------------------------
+  # SPARK + ICEBERG
+  # ---------------------------
+  spark-iceberg:
+    image: tabulario/spark-iceberg
+    container_name: retailx-spark
+    restart: unless-stopped
+    depends_on:
+      - iceberg-rest
+      - seaweedfs
+    ports:
+      - "8887:8888"
+      - "8080:8080"
+      - "10001:10001"
+    environment:
+      AWS_ACCESS_KEY_ID: admin
+      AWS_SECRET_ACCESS_KEY: retailx_password
+      AWS_REGION: us-east-1
+    volumes:
+      - ./source-data:/home/iceberg/source-data
+      - ./warehouse:/home/iceberg/warehouse
+      - ./spark/notebooks:/home/iceberg/notebooks/notebooks
+    networks:
+      - retailx-net
+
+networks:
+  retailx-net:
+    driver: bridge
+
+volumes:
+  namenode_data:
+  datanode1_data:
+  datanode2_data:
+  hive_data:
+  seaweedfs_data:

@@ -1,0 +1,44 @@
+mkdir -p RetailX/source-data
+cd RetailX
+
+python generate_data.py
+
+Create three folders:
+bronze - Original source data
+silver - Cleaned and standardized data
+gold - business-ready analytical data
+
+
+For tools we will use Docker-compose
+- Hadoop
+- Hive
+- Spark
+- Iceberg
+- PostgreSQL
+- seaweedfs
+
+Setup Docker Compose
+docker compose up -d
+
+
+Create directories in HDFS
+hdfs dfs -mkdir -p /retailx-data-lake/bronze/orders
+hdfs dfs -mkdir -p /retailx-data-lake/bronze/customers
+hdfs dfs -mkdir -p /retailx-data-lake/bronze/logs
+
+hdfs dfs -mkdir -p /retailx-data-lake/silver/orders
+hdfs dfs -mkdir -p /retailx-data-lake/silver/customers
+
+hdfs dfs -mkdir -p /retailx-data-lake/gold/sales
+
+
+Upload source datasets
+hdfs dfs -put /retailx/source-data/orders.csv /retailx-data-lake/bronze/orders/
+
+hdfs dfs -put /retailx/source-data/customers.json /retailx-data-lake/bronze/customers/
+
+hdfs dfs -put /retailx/source-data/application.log /retailx-data-lake/bronze/logs/
+
+
+Verify all uploaded files:
+hdfs dfs -ls -R /retailx-data-lake

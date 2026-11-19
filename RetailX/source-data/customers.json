@@ -1,0 +1,302 @@
+[
+    {
+        "customer_id": "C001",
+        "name": "Customer 1",
+        "email": "customer1@example.com",
+        "location": {
+            "city": "Mumbai",
+            "country": "India"
+        },
+        "membership": "Silver"
+    },
+    {
+        "customer_id": "C002",
+        "name": "Customer 2",
+        "email": "customer2@example.com",
+        "location": {
+            "city": "Gurgaon",
+            "country": "India"
+        },
+        "membership": "Silver"
+    },
+    {
+        "customer_id": "C003",
+        "name": "Customer 3",
+        "email": "customer3@example.com",
+        "location": {
+            "city": "Gurgaon",
+            "country": "India"
+        },
+        "membership": "Gold"
+    },
+    {
+        "customer_id": "C004",
+        "name": "Customer 4",
+        "email": null,
+        "location": {
+            "city": "Gurgaon",
+            "country": "India"
+        },
+        "membership": "Platinum"
+    },
+    {
+        "customer_id": "C005",
+        "name": "Customer 5",
+        "email": "customer5@example.com",
+        "location": {
+            "city": "Delhi",
+            "country": "India"
+        },
+        "membership": "Silver"
+    },
+    {
+        "customer_id": "C006",
+        "name": "Customer 6",
+        "email": "customer6@example.com",
+        "location": {
+            "city": "Noida",
+            "country": "India"
+        },
+        "membership": "Silver"
+    },
+    {
+        "customer_id": "C007",
+        "name": "Customer 7",
+        "email": "customer7@example.com",
+        "location": {
+            "city": "Mumbai",
+            "country": "India"
+        },
+        "membership": "Platinum"
+    },
+    {
+        "customer_id": "C008",
+        "name": "Customer 8",
+        "email": "customer8@example.com",
+        "location": {
+            "city": "Noida",
+            "country": "India"
+        },
+        "membership": "Platinum"
+    },
+    {
+        "customer_id": "C009",
+        "name": "Customer 9",
+        "email": "customer9@example.com",
+        "location": {
+            "city": "Noida",
+            "country": "India"
+        },
+        "membership": "Silver"
+    },
+    {
+        "customer_id": "C010",
+        "name": "Customer 10",
+        "email": "customer10@example.com",
+        "location": {
+            "city": "Mumbai",
+            "country": "India"
+        },
+        "membership": "Gold"
+    },
+    {
+        "customer_id": "C011",
+        "name": "Customer 11",
+        "email": "customer11@example.com",
+        "location": {
+            "city": "Gurgaon",
+            "country": "India"
+        },
+        "membership": "Platinum"
+    },
+    {
+        "customer_id": "C012",
+        "name": "Customer 12",
+        "email": "customer12@example.com",
+        "location": {
+            "city": "Mumbai",
+            "country": "India"
+        },
+        "membership": "Gold"
+    },
+    {
+        "customer_id": "C013",
+        "name": "Customer 13",
+        "email": "customer13@example.com",
+        "location": {
+            "city": "Delhi",
+            "country": "India"
+        },
+        "membership": "Silver"
+    },
+    {
+        "customer_id": "C014",
+        "name": "Customer 14",
+        "email": "customer14@example.com",
+        "location": {
+            "city": "Mumbai",
+            "country": "India"
+        },
+        "membership": "Gold"
+    },
+    {
+        "customer_id": "C015",
+        "name": "Customer 15",
+        "email": "customer15@example.com",
+        "location": {
+            "city": "Bangalore",
+            "country": "India"
+        },
+        "membership": "Platinum"
+    },
+    {
+        "customer_id": "C016",
+        "name": "Customer 16",
+        "email": "customer16@example.com",
+        "location": {
+            "city": "Delhi",
+            "country": "India"
+        },
+        "membership": "Platinum"
+    },
+    {
+        "customer_id": "C017",
+        "name": "Customer 17",
+        "email": "customer17@example.com",
+        "location": {
+            "city": "Mumbai",
+            "country": "India"
+        },
+        "membership": "Gold"
+    },
+    {
+        "customer_id": "C018",
+        "name": "Customer 18",
+        "email": "customer18@example.com",
+        "location": {
+            "city": "Delhi",
+            "country": "India"
+        },
+        "membership": "Gold"
+    },
+    {
+        "customer_id": "C019",
+        "name": "Customer 19",
+        "email": "customer19@example.com",
+        "location": {
+            "city": "Gurgaon",
+            "country": "India"
+        },
+        "membership": "Gold"
+    },
+    {
+        "customer_id": "C020",
+        "name": "Customer 20",
+        "email": "customer20@example.com",
+        "location": {
+            "city": "Mumbai",
+            "country": "India"
+        },
+        "membership": "Platinum"
+    },
+    {
+        "customer_id": "C021",
+        "name": "Customer 21",
+        "email": "customer21@example.com",
+        "location": {
+            "city": "Bangalore",
+            "country": "India"
+        },
+        "membership": "Platinum"
+    },
+    {
+        "customer_id": "C022",
+        "name": "Customer 22",
+        "email": "customer22@example.com",
+        "location": {
+            "city": "Noida",
+            "country": "India"
+        },
+        "membership": "Gold"
+    },
+    {
+        "customer_id": "C023",
+        "name": "Customer 23",
+        "email": "customer23@example.com",
+        "location": {
+            "city": "Noida",
+            "country": "India"
+        },
+        "membership": "Gold"
+    },
+    {
+        "customer_id": "C024",
+        "name": "Customer 24",
+        "email": "customer24@example.com",
+        "location": {
+            "city": "Mumbai",
+            "country": "India"
+        },
+        "membership": "Gold"
+    },
+    {
+        "customer_id": "C025",
+        "name": "Customer 25",
+        "email": "customer25@example.com",
+        "location": {
+            "city": "Delhi",
+            "country": "India"
+        },
+        "membership": "Gold"
+    },
+    {
+        "customer_id": "C026",
+        "name": "Customer 26",
+        "email": "customer26@example.com",
+        "location": {
+            "city": "Gurgaon",
+            "country": "India"
+        },
+        "membership": "Platinum"
+    },
+    {
+        "customer_id": "C027",
+        "name": "Customer 27",
+        "email": "customer27@example.com",
+        "location": {
+            "city": "Mumbai",
+            "country": "India"
+        },
+        "membership": "Platinum"
+    },
+    {
+        "customer_id": "C028",
+        "name": "Customer 28",
+        "email": "customer28@example.com",
+        "location": {
+            "city": "Noida",
+            "country": "India"
+        },
+        "membership": "Gold"
+    },
+    {
+        "customer_id": "C029",
+        "name": "Customer 29",
+        "email": "customer29@example.com",
+        "location": {
+            "city": "Noida",
+            "country": "India"
+        },
+        "membership": "Platinum"
+    },
+    {
+        "customer_id": "C030",
+        "name": "Customer 30",
+        "email": "customer30@example.com",
+        "location": {
+            "city": "Bangalore",
+            "country": "India"
+        },
+        "membership": "Silver"
+    }
+]
