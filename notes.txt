@@ -20,6 +20,8 @@ For tools we will use Docker-compose
 Setup Docker Compose
 docker compose up -d
 
+Enter into hadoop container
+docker exec -it retailx-namenode sh
 
 Create directories in HDFS
 hdfs dfs -mkdir -p /retailx-data-lake/bronze/orders
@@ -42,3 +44,59 @@ hdfs dfs -put /retailx/source-data/application.log /retailx-data-lake/bronze/log
 
 Verify all uploaded files:
 hdfs dfs -ls -R /retailx-data-lake
+
+
+Medallion Architecture
+Our objective:
+1. Read raw csv and JSON data from HDFS
+2. Identify data-quality problems
+3. Remove duplicates
+4. Handle invalid records
+5. Convert cleaned data into Parquet format
+6. Store the output in Silver layer
+
+
+PySpark
+Let's move into Spark container
+docker exec -it retailx-spark sh
+
+python -c "import pyspark; print(pyspark.__version__)"
+
+
+python - <<'PY'
+from pyspark.sql import SparkSession
+
+spark = (
+    SparkSession.builder
+    .appName("RetailX-HDFS-Connectivity")
+    .config("spark.hadoop.fs.defaultFS", "hdfs://namenode:8020")
+    .config("spark.sql.defaultCatalog", "spark_catalog")              # don't default to the Iceberg catalog
+    .config("spark.sql.catalog.demo.uri", "http://iceberg-rest:8181") # correct hostname for when you use Iceberg
+    .getOrCreate()
+)
+
+path = "hdfs://namenode:8020/retailx-data-lake/bronze/orders/orders.csv"
+
+df = spark.read.option("header", True).csv(path)
+
+df.show(5, truncate=False)
+
+spark.stop()
+PY
+
+
+PySpark
+- allow us to implement distributed data transformations
+
+
+We keep the clean data inside Parquet
+- Parquet stores data column by column
+
+- Columnar Storage
+- Row Groups and Pages
+
+
+One the data is cleaned... go back in HDFS silver folder
+hdfs dfs -ls -R /retailx-data-lake/silver
+
+
