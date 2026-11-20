@@ -100,3 +100,140 @@ One the data is cleaned... go back in HDFS silver folder
 hdfs dfs -ls -R /retailx-data-lake/silver
 
 
+Silver to Gold: Build the analytics layer
+
+1. City-wise sales
+2. Category-wise sales
+3. Customer-wise analytics
+
+
+Now enter into spark container
+docker exec -it retailx-spark sh
+
+Run silver to gold python script
+spark-submit /home/iceberg/notebooks/notebooks/silver_to_gold.py
+
+
+HIVE : SQL Analytics on Gold Layer
+- Data warehouse software built on top of Hadoop that lets you read, write and manages huge datasets
+- Instead of storing data in a traditional database format, Hive puts a structured table layer over raw files (CSV, Parquet, ORC) sitting in distributed environment storage (HDFS, Amazon S3).
+
+
+Hive alternatives:
+- Cloud Data Warehouses & Lakehouses: Snowflake, Google Cloud BigQuery, Databricks
+- Open Table Formats: Apache Iceberg and Delta Lake
+- Faster SQL & Big Data Engines: Spark, Impala, Presto, ClickHouse
+- Enterprise Databases: Oracle Exadata, Teradata, IBM DB2
+
+Verify the Hive Container:
+docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
+
+docker logs --tail 50 retailx-hive
+docker exec -it retailx-hive sh
+which beeline
+
+Connect to hive server
+beeline -u jdbc:hive2://localhost:10000/default
+
+SHOW DATABASES;
+CREATE DATABASE IF NOT EXISTS retailx;
+USE retailx;
+
+
+External Tables
+- Allows Hive to query files already stored in HDFS without moving or copying the data into Hive's warehouse directory
+
+
+
+CREATE EXTERNAL TABLE IF NOT EXISTS city_sales (
+    city STRING,
+    total_orders BIGINT,
+    total_revenue DOUBLE,
+    average_order_value DOUBLE
+)
+STORED AS PARQUET
+LOCATION 'hdfs://namenode:8020/retailx-data-lake/gold/city_sales';
+
+
+CREATE EXTERNAL TABLE IF NOT EXISTS category_sales (
+    category STRING,
+    total_orders BIGINT,
+    total_revenue DOUBLE,
+    average_order_value DOUBLE
+)
+STORED AS PARQUET
+LOCATION 'hdfs://namenode:8020/retailx-data-lake/gold/category_sales';
+
+
+CREATE EXTERNAL TABLE IF NOT EXISTS customer_sales (
+    customer_id STRING,
+    name STRING,
+    city STRING,
+    membership STRING,
+    total_orders BIGINT,
+    total_spent DOUBLE,
+    average_order_value DOUBLE
+)
+STORED AS PARQUET
+LOCATION 'hdfs://namenode:8020/retailx-data-lake/gold/customer_sales';
+
+DESCRIBE city_sales;
+DESCRIBE category_sales;
+DESCRIBE customer_sales;
+
+
+SELECT * FROM city_sales LIMIT 5;
+
+
+SELECT
+    city,
+    total_orders,
+    total_revenue
+FROM city_sales
+ORDER BY total_revenue DESC
+LIMIT 5;
+
+Overall business performance
+SELECT
+    SUM(total_orders) AS total_orders,
+    ROUND(SUM(total_revenue), 2) AS total_revenue,
+    ROUND(AVG(average_order_value), 2) AS avg_city_order_value
+FROM city_sales;
+
+
+Apache Iceberg
+- Storage Layer: S3, Data Lake, HDFS
+- Table Format Layer: Apache Iceberg
+- Catalog
+
+Data Lake:
+HDFS + Parquet + Bronze/Silver/Gold
+
+Lakehouse:
+HDFS + Parquet + Iceberg
+
+First enter into spark container:
+docker exec -it retailx-spark sh
+
+Check for Iceberg's JAR:
+find / -iname '*iceberg*spark*.jar' 2>/dev/null
+
+
+docker exec retailx-spark sh -c 'env | grep -Ei "ICEBERG|AWS|S3|CATALOG"'
+
+REST Catalog Container:
+docker ps --format "table {{.Names}}\t{{.Image}}\t{{.Status}}\t{{.Ports}}"
+
+docker inspect retailx-iceberg-rest \
+  --format '{{range .Config.Env}}{{println .}}{{end}}' \
+  | grep -Ei 'WAREHOUSE|S3|CATALOG|URI|ENDPOINT|FILEIO|IO-IMPL'
+
+
+
+docker exec retailx-spark bash -c '
+spark-submit \
+  --packages org.apache.iceberg:iceberg-spark-runtime-3.5_2.12:1.8.1,org.apache.iceberg:iceberg-aws-bundle:1.8.1 \
+  /home/iceberg/notebooks/notebooks/iceberg_demo.py
+'
+
+
